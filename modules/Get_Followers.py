@@ -74,14 +74,19 @@ def select_account(accounts):
         
     print(f"\n{Colors.CYAN}Available accounts:{Colors.RESET}")
     for i, acc in enumerate(accounts):
-        # Safely access account information - assuming each account is a tuple/list
+        # Safely access account information - support tuple/list or dict
+        username = "Unknown"
         try:
-            username = acc[2]  # Try to get username from index 2
-            print(f"  {Colors.GREEN}[{i}] {username}{Colors.RESET}")
-        except IndexError:
-            # If index 2 doesn't exist, try to get first element
-            username = acc[0] if len(acc) > 0 else "Unknown"
-            print(f"  {Colors.GREEN}[{i}] {username}{Colors.RESET}")
+            if isinstance(acc, dict):
+                username = acc.get('username') or acc.get('user') or acc.get('name') or 'Unknown'
+            elif isinstance(acc, (list, tuple)):
+                # Common format: (username, session_id)
+                username = acc[0] if len(acc) > 0 else 'Unknown'
+            else:
+                username = str(acc)
+        except Exception:
+            username = 'Unknown'
+        print(f"  {Colors.GREEN}[{i}] {username}{Colors.RESET}")
     
     while True:
         try:
